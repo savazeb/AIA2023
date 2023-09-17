@@ -1,4 +1,4 @@
-import copy
+from state import *
 
 OPEN = " "
 OUTER_WALL = "#"
@@ -15,7 +15,7 @@ EAST = 1
 SOUTH = 2
 WEST = 3
 
-MAP = [
+MAZE = [
     [
         OUTER_WALL,
         OUTER_WALL,
@@ -100,73 +100,55 @@ temp = 0
 
 
 def main():
-    print_map(MAP)
-    end_coordinate = get_end(MAP)
-    result_map = create_flow(MAP, end_coordinate, temp)
-    print_map(result_map)
+    print_map(MAZE)
 
     return
 
 
-def is_square_matrix(map_matrix):
-    if len(set([len(row) for row in map_matrix])) == 2:
-        return True
-        # print("Error:Not a square matrix")
-    return False
+class Solver:
+    State = State()
+
+    w = 0
+    h = 0
+    done = False
+    cancelled = False
+    age = 0
+    maze = []
+
+    def set(self, x, y, maze):
+        pass
+
+    def step(self, n):
+        n = n or 1
+        states = [None, None, None, None]
+
+        while ():
+            self.age += 1
+            changes = 0
+            for y in range(self.h):
+                for x in range(self.w):
+                    states[0] = self.get(self, x + 0, y + -1)
+                    states[1] = self.get(self, x + 1, y + 0)
+                    states[2] = self.get(self, x + 0, y + 1)
+                    states[3] = self.get(self, x + -1, y + 0)
+
+                    current = self.get(self, x, y)
+                    next = State.next(current, states)
+
+                    if current != next:
+                        changes += 1
+                    self.set(x, y, next)
+
+    def get(self, x, y):
+        if x >= 0 and x < self.w and y >= 0 and self.h:
+            return self.maze[y][x]
+        else:
+            return State.WALL
 
 
 def print_map(map_matrix):
     for row in map_matrix:
         print(" ".join(row))
-
-
-def get_end(map_matrix):
-    for index, row_list in enumerate(map_matrix):
-        if END in row_list:
-            return index, row_list.index(END)
-
-    return None
-
-
-def create_flow(map_matrix, target_coordinate, temp):
-    # flow_map = copy.deepcopy(map_matrix)
-    flow_map = map_matrix
-
-    temp += 1
-
-    previous_coordinate = target_coordinate
-
-    for i in range(DIRECTION):
-        current_coordinate = [
-            previous_coordinate[0] + DIFFERENCE[i][0],
-            previous_coordinate[1] + DIFFERENCE[i][1],
-        ]
-
-        if current_coordinate[0] < 0 or current_coordinate[0] + 1 > len(flow_map):
-            continue
-
-        if current_coordinate[1] < 0 or current_coordinate[1] + 1 > len(
-            flow_map[current_coordinate[0]]
-        ):
-            continue
-
-        if (
-            flow_map[previous_coordinate[0]][previous_coordinate[1]] not in FLOW
-            and flow_map[previous_coordinate[0]][previous_coordinate[1]] != END
-        ):
-            continue
-
-        if flow_map[current_coordinate[0]][current_coordinate[1]] == OPEN:
-            flow_map[current_coordinate[0]][current_coordinate[1]] = FLOW[
-                (i + 2) % DIRECTION
-            ]
-
-        create_flow(flow_map, current_coordinate, temp)
-
-        if temp > 15:
-            return flow_map
-
-    return flow_map
 
 
 if __name__ == "__main__":
